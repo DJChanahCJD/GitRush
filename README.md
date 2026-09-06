@@ -7,10 +7,15 @@
 访问首页输入仓库地址，或直接请求：
 
 ```
-GET /owner/repo
+GET /owner/repo                      # 默认分支（main → master 自动回退）
+GET /owner/repo?branch=dev           # 指定分支
+GET /owner/repo?tag=v1.0.0           # 指定标签
+GET /owner/repo?commit=abc1234       # 指定提交（7-40 位 SHA）
 ```
 
-例如：`/DJChanahCJD/gov-todo` → 返回 `gov-todo.zip`（默认 `main` 分支）。
+例如：`/DJChanahCJD/gov-todo` → 返回 `gov-todo-main.zip`（对齐 GitHub 官方命名 `repo-{ref}.zip`）。
+
+branch / tag / commit 最多指定一个；未指定时依次尝试 `main`、`master`。
 
 ## 本地开发
 
