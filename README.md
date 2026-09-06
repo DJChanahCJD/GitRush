@@ -30,6 +30,13 @@ npm run dev
 npm run deploy
 ```
 
+## 性能与防滥用
+
+- **Cache**：Cloudflare Cache API 按请求 URL（repo + ref）缓存归档，TTL 5 分钟；仅缓存成功响应，超大归档超出平台对象上限时自动放弃缓存
+- **Rate Limit**：Cloudflare 原生 Ratelimit 绑定（无需 KV），按 IP 限流 10 次/60 秒，超限返回 429
+- **请求日志**：结构化 JSON 日志（owner/repo/ref/状态/缓存命中/耗时），`npm run dev` 或 `wrangler tail` 查看
+- **元数据**：未指定 ref 时优先通过 GitHub API 解析默认分支（结果缓存 10 分钟），失败时回退 `main → master`
+
 ## 架构
 
 ```

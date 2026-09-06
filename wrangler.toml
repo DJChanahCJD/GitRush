@@ -4,3 +4,10 @@ compatibility_date = "2026-09-01"
 
 [assets]
 directory = "./public"
+
+# Cloudflare 原生 Ratelimit 绑定（非 KV）：按 IP 限流
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 10, period = 60 }
