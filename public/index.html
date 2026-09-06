@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Downloader</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: system-ui, -apple-system, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100dvh;
+        background: #fafafa;
+        color: #1a1a1a;
+        padding: 24px;
+    }
+    main { width: 100%; max-width: 360px; }
+    h1 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+    input {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        border: 1px solid #d4d4d4;
+        border-radius: 8px;
+        outline: none;
+    }
+    input:focus { border-color: #1a1a1a; }
+    button {
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #fff;
+        background: #1a1a1a;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    button:hover { background: #333; }
+    p {
+        margin-top: 16px;
+        font-size: 12px;
+        color: #888;
+        text-align: center;
+    }
+    #error {
+        margin-top: 10px;
+        font-size: 12px;
+        color: #d92d20;
+        text-align: center;
+        min-height: 16px;
+    }
+</style>
+</head>
+<body>
+<main>
+    <h1>GitHub Downloader</h1>
+    <input id="url" type="text" placeholder="https://github.com/owner/repo" autofocus>
+    <button id="btn">Download ZIP</button>
+    <div id="error"></div>
+    <p>支持 GitHub Public Repository · 无需安装客户端</p>
+</main>
+<script>
+    /**
+     * 从用户输入中提取 owner/repo，非法输入返回 null
+     * @param {string} value 输入内容
+     * @returns {string | null} "owner/repo" 或 null
+     */
+    function parseInput(value) {
+        value = value.trim();
+        if (!value) return null;
+        // 允许直接输入 owner/repo
+        if (!value.includes("://")) {
+            if (!/^[\w.-]+\/[\w.-]+$/.test(value)) return null;
+            return value;
+        }
+        try {
+            const url = new URL(value);
+            if (url.hostname !== "github.com") return null;
+            const seg = url.pathname.split("/").filter(Boolean);
+            if (seg.length < 2) return null;
+            return seg[0] + "/" + seg[1];
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * 处理下载按钮点击：校验输入并跳转下载
+     */
+    function download() {
+        const errorEl = document.getElementById("error");
+        const repo = parseInput(document.getElementById("url").value);
+        if (!repo) {
+            errorEl.textContent = "请输入合法的 GitHub 仓库地址";
+            return;
+        }
+        errorEl.textContent = "";
+        location.href = "/" + repo;
+    }
+
+    document.getElementById("btn").addEventListener("click", download);
+    document.getElementById("url").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") download();
+    });
+</script>
+</body>
+</html>
